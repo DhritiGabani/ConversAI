@@ -20,35 +20,30 @@ export default async function handler(req, res) {
     if (sentMessage.trim().length === 0) {
         replyToBeSent = "We could not get your message. Please try again";
     } 
-
     else {
         try {
             const completion = await openAI.createCompletion({
-                // user_input =input("")
-                model: "text-davinci-003", // required
-                // message: [{"role" : "user", "content" : req.body.Body}],
-                prompt: req.body.Body, // completion based on this
+                model: "text-davinci-003", 
+                prompt: req.body.Body, 
                 n: 1,
-                temperature: 0.6, //
+                temperature: 0.6,
                 max_tokens: 150,
             });
 
-            replyToBeSent = removeIncompleteText(completion.data.choices[0].text)
-            // removeIncompleteText(completion.data.choices[0].message.content)
+            removeIncompleteText(completion.data.choices[0].text)        
         } 
 
         catch (error) {
             if (error.response) {
                 console.log(error.response)
                 replyToBeSent = "There was an issue with the server"
-            } else { // error getting response
-                replyToBeSent = "An error occurred during your request.";
+            } else { 
+                replyToBeSent = "An error occurred during the request.";
             }
         }
     }
 
     messageResponse.message(replyToBeSent);
-    // send response
 
     res.writeHead(200, {
         'Content-Type': 'text/xml'
